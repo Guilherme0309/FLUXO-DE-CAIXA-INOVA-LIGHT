@@ -12,7 +12,7 @@
 <%- include('partials/header') %>
 
 <main class="container">
-    <h1>Dashboard Financeiro <%= anoAtual %></h1>
+    <h1>DASHBOARD FINANCEIRO <%= anoAtual %></h1>
 
     <!-- CASO NÃO EXISTAM MOVIMENTAÇÕES -->
     <% if (totais.length === 0) { %>
@@ -21,6 +21,48 @@
 
     <% } else { %>
     
+
+    <h1>Total Anual</h1>
+
+                
+    <div class="resumo-financeiro">
+
+    <div class="caixa-financeira">
+        <h3>Total de Entradas</h3>
+
+        <label id="Entradas">
+            R$ <%= totais.ENTRADAS.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) %>
+        </label>
+    </div>
+
+    <div class="caixa-financeira">
+        <h3>Total de Saídas</h3>
+
+        <label id="Saidas">
+            R$ <%= totais.SAIDAS.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) %>
+        </label>
+    </div>
+
+    <div class="caixa-financeira">
+        <h3>Saldo Total</h3>
+
+        <label id="Total">
+            R$ <%= totais.SALDO.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) %>
+        </label>
+    </div>
+
+    </div>
+        <h1>Fluxo de Caixa Mensal <%= anoAtual %></h1>  
+
         <table>
             <thead>
                 <tr>
@@ -28,6 +70,7 @@
                     <th>ENTRADAS</th>
                     <th>SAÍDAS</th>
                     <th>SALDOS</th>
+                    <th>ACESSAR</th>
                 </tr>
             </thead>
 
@@ -69,36 +112,15 @@
                                     maximumFractionDigits: 2
                                 }) %>
                         </td>
+                        <td>
+                            <a href="/TabMovimentacoes?mes=<%= anoAtual + '-' + mesNumero;%>&tipo_mov=%25">LINK</a>
+                        </td>
                     </tr>
 
                 <% } %>
             </tbody>
 
         <tfoot>
-            <tr>
-                <th>TOTAL ANUAL</th>
-
-                <th>
-                    R$ <%= totais.ENTRADAS.toLocaleString('pt-BR', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    }) %>
-                </th>
-
-                <th>
-                    R$ <%= totais.SAIDAS.toLocaleString('pt-BR', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    }) %>
-                </th>
-
-                <th>
-                    R$ <%= totais.SALDO.toLocaleString('pt-BR', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    }) %>
-                </th>
-            </tr>
             </tfoot>
         </table>
 
@@ -118,6 +140,7 @@
             <tr>
                 <th>DATA</th>
                 <th>DESCRIÇÃO</th>
+                <th>TIPO MOV.</th>
                 <th>VALOR</th>
             </tr>
         </thead>
@@ -132,7 +155,13 @@
                     <td>
                         <%= ultimasEntradas[i].DESCRICAO %>
                     </td>
-
+                    <td>
+                        <% if (ultimasEntradas[i].TIPO_MOV == 'ENT') {%>
+                            ENTRADA
+                        <% } else { %>
+                            SAIDA
+                        <% } %>
+                    </td>
                     <td>
                         R$ <%= Number(ultimasEntradas[i].VALOR)
                             .toLocaleString('pt-BR', {

@@ -12,10 +12,8 @@
     <%- include('partials/header') %>
 
 <main class="container">
-    <h1>MOVIMENTAÇÕES - INOVA LIGHT</h1>
 
-
-    <form action="/TabMovimentacoes" method="GET">
+    <form action="/TabMovimentacoes" method="GET" class="formulario" style="margin-top: 0;">
 
         <label for="mes">Selecione o mês:</label>
 
@@ -46,15 +44,47 @@
 
     <% } else { %>
     
+<div class="resumo-financeiro">
+
     <% if (tipo_mov === '%' || tipo_mov === 'ENT') { %>
-        <label>Total Entradas = R$ <%= totalMes.ENTRADAS %></label>
+        <div class="caixa-financeira">
+        <h3>Total de Entradas</h3>
+
+        <label id="Entradas">
+            R$ <%= totalMes.ENTRADAS.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) %>
+        </label>
+        </div>
     <% } %>
     <% if (tipo_mov === '%' || tipo_mov === 'SAI') { %>
-    <label>Total Saidas = R$ <%= totalMes.SAIDAS %></label> 
+    <div class="caixa-financeira">
+        <h3>Total de Saídas</h3>
+
+        <label id="Saidas">
+            R$ <%= totalMes.SAIDAS.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) %>
+        </label>
+    </div> 
     <% } %>
     <% if (tipo_mov === '%') { %>
-    <label>Saldo = R$ <%= totalMes.SALDO %></label>
+    <div class="caixa-financeira">
+        <h3>Saldo Total</h3>
+
+        <label id="Total">
+            R$ <%= totalMes.SALDO.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) %>
+        </label>
+    </div>
     <% } %>
+</div>
+
+<h1>TABELA DE MOVIMENTAÇÕES </h1>
 
     <!-- TABELA DE MOVIMENTAÇÕES -->
     <table>

@@ -178,6 +178,68 @@ textarea:focus {
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
 }
 
+/* CAIXAS DO RESUMO FINANCEIRO */
+
+.resumo-financeiro {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    margin: 25px 0;
+}
+
+/* ESTILO DAS TRÊS CAIXAS */
+
+.caixa-financeira {
+    flex: 1;
+    min-width: 0;
+    background-color: white;
+    padding: 25px 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+/* TÍTULO DAS CAIXAS */
+
+.caixa-financeira h3 {
+    font-size: 16px;
+    color: #64748b;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* VALORES */
+
+.caixa-financeira label {
+    font-size: 26px;
+    font-weight: bold;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+/* ENTRADAS - VERDE */
+
+#Entradas {
+    color: #16834a;
+}
+
+/* SAÍDAS - VERMELHO */
+
+#Saidas {
+    color: #dc2626;
+}
+
+/* SALDO - PRETO */
+
+#Total {
+    color: #111111;
+}
+
 /* =========================================
    BOTÕES
 ========================================= */
@@ -389,4 +451,20 @@ tfoot a:hover {
     button {
         padding: 10px 16px;
     }
+
+    .resumo-financeiro {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .caixa-financeira {
+        width: 100%;
+        padding: 20px;
+    }
+
+    .caixa-financeira label {
+        font-size: 24px;
+    }
 }
+
+

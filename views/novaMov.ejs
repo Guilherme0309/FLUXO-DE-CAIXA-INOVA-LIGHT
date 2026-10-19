@@ -33,7 +33,7 @@
 
     <div>
         <label for="data">Data da Movimentação:</label>
-        <input type="date" id="data" name="data" required>
+        <input type="date" id="data" name="data" value="<%= dataAtual %>" max="<%= dataAtual %>" required>
     </div>
 
     <div>
@@ -42,7 +42,7 @@
         id="descricao"
         name="descricao"
         placeholder="Descreva a movimentação"
-        maxlength="150"
+        maxlength="200"
         rows="3"
         required
     ></textarea>

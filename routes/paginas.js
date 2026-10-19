@@ -119,7 +119,7 @@ router.get('/novaMovimentacao', (req, res) => {
         String(hoje.getDate()).padStart(2, '0')
     ].join('-');
 
-    res.render('index', { movs, dataAtual });
+    res.render('novaMov', { movs, dataAtual });
   });
 });
 
@@ -131,14 +131,29 @@ router.post('/novaMovimentacao', (req, res) => {
   //Converte o valor para número decimal
     const valorNumerico = Number(valor);
   
+  //PUXA A DATA ATUAL
+    const hoje = new Date();
+
+    const dataAtual = [
+        hoje.getFullYear(),
+        String(hoje.getMonth() + 1).padStart(2, '0'),
+        String(hoje.getDate()).padStart(2, '0')
+    ].join('-');
+
   //VALIDAÇÕES
   if (!["ENT", "SAI"].includes(tipo_mov)) {
         return res.status(400).send("Tipo de movimentação inválido!");
   } else if (typeof descricao !== "string" || descricao.trim() === "") {
         return res.status(400).send("Descrição obrigatória!");
-  } if (!Number.isFinite(valorNumerico) || valorNumerico <= 0){
+  } else if (!Number.isFinite(valorNumerico) || valorNumerico <= 0){
     return res.status(400).send("Valor inválido!");
-  }
+  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(data)) {
+    return res.status(400).send("Data inválida!");
+  } else if (data > dataAtual) {
+    return res.status(400).send(
+        "Não é possível cadastrar uma movimentação com data futura!"
+    );
+}
 
   db.run('INSERT INTO movimentacoes (TIPO_MOV, DATA, DESCRICAO, VALOR) VALUES (?, ?, ?, ?)', [tipo_mov, data, descricao, valor], (erro) => {
     if (erro) return res.status(500).send('Erro ao gravar movimentação');
@@ -194,16 +209,13 @@ router.get('/TabMovimentacoes', (req, res) => {
 
     [mes + '%'],
 
-    (erro, totais) => {
+    (erro, totalMes) => {
         if (erro) {
             return res.status(500).send("Erro ao calcular totais!");
         }
-        totalMes = totais;
-        console.log(totais);
-    }
-);
-
-    db.all( 
+        console.log(totalMes);
+        
+        db.all( 
         `SELECT * FROM MOVIMENTACOES
          WHERE DATA LIKE ? AND TIPO_MOV LIKE ?
          ORDER BY DATA DESC`,
@@ -238,6 +250,9 @@ router.get('/TabMovimentacoes', (req, res) => {
             });
         }
     );
+    }
+);
+
 });
 
 
