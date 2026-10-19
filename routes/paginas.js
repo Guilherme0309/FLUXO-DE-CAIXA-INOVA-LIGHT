@@ -219,7 +219,7 @@ router.get('/TabMovimentacoes', (req, res) => {
             // Quantidade total de páginas
             const totalPaginas = Math.max(
                 1,
-                Math.ceil(dados.length / 5)
+                Math.ceil(dados.length / 8)
             );
 
             // Garante que a página esteja dentro do limite

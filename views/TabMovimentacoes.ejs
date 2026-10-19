@@ -9,8 +9,9 @@
 </head>
 <body>
 
-<main class="container">
     <%- include('partials/header') %>
+
+<main class="container">
     <h1>MOVIMENTAÇÕES - INOVA LIGHT</h1>
 
 
@@ -68,11 +69,11 @@
 
         <tbody>
 
-            <% let qtd_posts = pag * 5 %>
+            <% let qtd_posts = pag * 8 %>
 
             <!-- LISTAGEM DE 5 EM 5 MOVIMENTAÇÕES -->
-            <% let i = qtd_posts - 5;
-               for (i = qtd_posts - 5; i < qtd_posts; i++) { %>
+            <% let i = qtd_posts - 8;
+               for (i = qtd_posts - 8; i < qtd_posts; i++) { %>
 
                 <% if (i < dados.length) { %>
 
@@ -129,7 +130,7 @@
                 <!-- NÚMERO DA PÁGINA -->
                 <td colspan="2" style="text-align: center;">
 
-                    <% if (dados.length > 5) { %>
+                    <% if (dados.length > 8) { %>
                         <%= pag %> / <%= totalPaginas %>
                     <% } %>
 

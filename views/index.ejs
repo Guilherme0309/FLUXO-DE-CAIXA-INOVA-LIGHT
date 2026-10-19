@@ -8,40 +8,61 @@
   <script src="/js/script.js" defer></script>
 </head>
 <body>
-  
+
+  <%- include('partials/header') %>
+
   <main class="container">
-    <%- include('partials/header') %>
     <h1>NOVA MOVIMENTAÇÃO %></h1>
 
-    <form action="/novaMovimentacao" method="POST" class="formLancamento" id="formLancamento">
-      <div>
+    
+<form
+    action="/novaMovimentacao"
+    method="POST"
+    class="formulario"
+    id="formLancamento"
+    style="width: 100%;"
+>
+    <div>
         <label for="tipo_mov">Tipo de Movimentação:</label>
-          <select id="tipo_mov" name="tipo_mov" required>
+        <select id="tipo_mov" name="tipo_mov" required>
             <option value="" disabled selected>Selecione o tipo</option>
             <option value="ENT">Entrada</option>
             <option value="SAI">Saída</option>
-          </select>
-      </div>
+        </select>
+    </div>
 
-      <div>
+    <div>
         <label for="data">Data da Movimentação:</label>
-        <input type="date" id="data" value="<%= dataAtual %>" name="data" required>
-      </div>
-      
-      <div>
-        <label for="descricao">Descrição da Movimentação:</label>
-        <input type="text" name="descricao" placeholder="Descrição da Movimentação" maxlength="150" required>
-      </div>
+        <input type="date" id="data" name="data" required>
+    </div>
 
-      <div>
+    <div>
+        <label for="descricao">Descrição da Movimentação:</label>
+        <textarea
+        id="descricao"
+        name="descricao"
+        placeholder="Descreva a movimentação"
+        maxlength="150"
+        rows="3"
+        required
+    ></textarea>
+    </div>
+
+    <div>
         <label for="valor">Valor da Movimentação:</label>
-        <input type="text" id="valor" placeholder="R$ 0,00" inputmode="numeric" autocomplete="off" required>
-         <!-- Campo enviado ao Express -->
+        <input
+            type="text"
+            id="valor"
+            placeholder="R$ 0,00"
+            inputmode="numeric"
+            required
+        >
         <input type="hidden" id="valorDecimal" name="valor">
-      </div>
-      
-      <button type="submit">Adicionar</button>
-    </form>
+    </div>
+
+    <button type="submit">Adicionar Movimentação</button>
+</form>
+
 
   </main>
 
