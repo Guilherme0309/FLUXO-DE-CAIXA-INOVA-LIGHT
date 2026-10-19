@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimentações - Inova Light</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<main class="container">
+    <%- include('partials/header') %>
+    <h1>MOVIMENTAÇÕES - INOVA LIGHT</h1>
+
+
+    <form action="/TabMovimentacoes" method="GET">
+
+        <label for="mes">Selecione o mês:</label>
+
+        <input
+            type="month"
+            id="mes"
+            name="mes"
+            value="<%= mes %>"
+            required
+        >
+        <label for="tipo_mov">Tipo de Movimentação:</label>
+
+          <select id="tipo_mov" name="tipo_mov" required>
+            <option value="%" <%= tipo_mov === '%' ? 'selected' : '' %>> Todas  </option>
+            <option value="ENT" <%= tipo_mov === 'ENT' ? 'selected' : '' %>>Entrada</option>
+            <option value="SAI" <%= tipo_mov === 'SAI' ? 'selected' : '' %>>Saída</option>
+          </select>
+
+        <button type="submit">Buscar</button>
+    </form>
+
+    <hr>
+
+    <!-- CASO NÃO EXISTAM MOVIMENTAÇÕES -->
+    <% if (dados.length === 0) { %>
+
+        <h1>Nenhuma movimentação cadastrada neste mês.</h1>
+
+    <% } else { %>
+    
+    <% if (tipo_mov === '%' || tipo_mov === 'ENT') { %>
+        <label>Total Entradas = R$ <%= totalMes.ENTRADAS %></label>
+    <% } %>
+    <% if (tipo_mov === '%' || tipo_mov === 'SAI') { %>
+    <label>Total Saidas = R$ <%= totalMes.SAIDAS %></label> 
+    <% } %>
+    <% if (tipo_mov === '%') { %>
+    <label>Saldo = R$ <%= totalMes.SALDO %></label>
+    <% } %>
+
+    <!-- TABELA DE MOVIMENTAÇÕES -->
+    <table>
+        <thead>
+            <tr>
+                <th>DATA</th>
+                <th>DESCRIÇÃO</th>
+                <th>TIPO</th>
+                <th>VALOR</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <% let qtd_posts = pag * 5 %>
+
+            <!-- LISTAGEM DE 5 EM 5 MOVIMENTAÇÕES -->
+            <% let i = qtd_posts - 5;
+               for (i = qtd_posts - 5; i < qtd_posts; i++) { %>
+
+                <% if (i < dados.length) { %>
+
+                    <tr>
+
+                        <td>
+                            <%= dados[i].DATA.split('-').reverse().join('/') %>
+                        </td>
+
+                        <td>
+                            <%= dados[i].DESCRICAO %>
+                        </td>
+
+                        <td>
+                            <% if (dados[i].TIPO_MOV == 'ENT') { %>
+                                Entrada
+                            <% } else if (dados[i].TIPO_MOV == 'SAI') { %>
+                                Saída
+                            <% } %>
+                        </td>
+
+                        <td>
+                            R$ <%= Number(dados[i].VALOR)
+                                .toLocaleString('pt-BR', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                }) %>
+                        </td>
+
+                    </tr>
+
+                <% } %>
+
+            <% } %>
+
+        </tbody>
+
+        <tfoot>
+            <tr>
+
+                <!-- PÁGINA ANTERIOR -->
+                <td colspan="1" style="text-align: center;">
+
+                    <% if (pag > 1) { %>
+
+                        <a href="/TabMovimentacoes?mes=<%= mes %>&pag=<%= Number(pag) - 1 %>">
+                            ⬅
+                        </a>
+
+                    <% } %>
+
+                </td>
+
+                <!-- NÚMERO DA PÁGINA -->
+                <td colspan="2" style="text-align: center;">
+
+                    <% if (dados.length > 5) { %>
+                        <%= pag %> / <%= totalPaginas %>
+                    <% } %>
+
+                </td>
+
+                <!-- PRÓXIMA PÁGINA -->
+                <td colspan="1" style="text-align: center;">
+
+                    <% if (qtd_posts < dados.length) { %>
+
+                        <a href="/TabMovimentacoes?mes=<%= mes %>&pag=<%= Number(pag) + 1 %>">
+                            ⮕
+                        </a>
+
+                    <% } %>
+
+                </td>
+
+            </tr>
+        </tfoot>
+
+    </table>
+    <% } %>
+    
+
+</main>
+
+</body>
+</html>

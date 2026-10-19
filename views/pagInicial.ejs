@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimentações - Inova Light</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<main class="container">
+    <%- include('partials/header') %>
+    <h1>Dashboard Financeiro <%= anoAtual %></h1>
+
+    <!-- CASO NÃO EXISTAM MOVIMENTAÇÕES -->
+    <% if (totais.length === 0) { %>
+
+        <h1>Nenhuma movimentação cadastrada neste mês.</h1>
+
+    <% } else { %>
+    
+        <table>
+            <thead>
+                <tr>
+                    <th>MÊS</th>
+                    <th>ENTRADAS</th>
+                    <th>SAÍDAS</th>
+                    <th>SALDOS</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% for (let i = 0; i < 12; i++) { %>
+
+                    <% 
+                        const mesNumero = String(i + 1).padStart(2, '0');
+                        const periodo = anoAtual + '-' + mesNumero;
+
+                        const dadosMes = totalMeses.find(
+                            item => item.MES === periodo
+                        );
+                    %>
+
+                    <tr>
+                        <td><%= meses[i] %></td>
+
+                        <td>
+                            R$ <%= (dadosMes ? dadosMes.ENTRADAS : 0)
+                                .toLocaleString('pt-BR', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                }) %>
+                        </td>
+
+                        <td>
+                            R$ <%= (dadosMes ? dadosMes.SAIDAS : 0)
+                                .toLocaleString('pt-BR', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                }) %>
+                        </td>
+
+                        <td>
+                            R$ <%= (dadosMes ? dadosMes.SALDO : 0)
+                                .toLocaleString('pt-BR', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                }) %>
+                        </td>
+                    </tr>
+
+                <% } %>
+            </tbody>
+
+        <tfoot>
+            <tr>
+                <th>TOTAL ANUAL</th>
+
+                <th>
+                    R$ <%= totais.ENTRADAS.toLocaleString('pt-BR', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }) %>
+                </th>
+
+                <th>
+                    R$ <%= totais.SAIDAS.toLocaleString('pt-BR', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }) %>
+                </th>
+
+                <th>
+                    R$ <%= totais.SALDO.toLocaleString('pt-BR', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }) %>
+                </th>
+            </tr>
+            </tfoot>
+        </table>
+
+    <% } %>
+
+    
+<h2>Últimas 5 Entradas</h2>
+
+<% if (ultimasEntradas.length === 0) { %>
+
+    <p>Nenhuma entrada cadastrada.</p>
+
+<% } else { %>
+
+    <table>
+        <thead>
+            <tr>
+                <th>DATA</th>
+                <th>DESCRIÇÃO</th>
+                <th>VALOR</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <% for (let i = 0; i < ultimasEntradas.length; i++) { %>
+                <tr>
+                    <td>
+                        <%= ultimasEntradas[i].DATA.split('-').reverse().join('/') %>
+                    </td>
+
+                    <td>
+                        <%= ultimasEntradas[i].DESCRICAO %>
+                    </td>
+
+                    <td>
+                        R$ <%= Number(ultimasEntradas[i].VALOR)
+                            .toLocaleString('pt-BR', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            }) %>
+                    </td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+
+<% } %>
+
+
+</main>
+
+</body>
+</html>

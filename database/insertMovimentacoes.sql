@@ -1,0 +1,24 @@
+SELECT
+        SUBSTR(DATA, 1, 7) AS MES,
+
+        COALESCE(SUM(
+            CASE WHEN TIPO_MOV = 'ENT' THEN VALOR ELSE 0 END
+        ), 0) AS ENTRADAS,
+
+        COALESCE(SUM(
+            CASE WHEN TIPO_MOV = 'SAI' THEN VALOR ELSE 0 END
+        ), 0) AS SAIDAS,
+
+        COALESCE(SUM(
+            CASE WHEN TIPO_MOV = 'ENT' THEN VALOR
+                WHEN TIPO_MOV = 'SAI' THEN -VALOR
+                ELSE 0 END
+        ), 0) AS SALDO
+
+    FROM MOVIMENTACOES
+
+    WHERE DATA LIKE '2026%'
+
+    GROUP BY SUBSTR(DATA, 1, 7)
+
+    ORDER BY MES;
