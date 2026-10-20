@@ -11,29 +11,62 @@
 
     <%- include('partials/header') %>
 
+
+<a href="/<%if (mes != '%'){ %>?ano=<%=mes.slice(0, 4)%><% } %>" class="btn-voltar" title="Voltar ao Dashboard">
+    &#8592; Voltar
+</a>
+
 <main class="container">
 
-    <form action="/TabMovimentacoes" method="GET" class="formulario" style="margin-top: 0;">
 
-        <label for="mes">Selecione o mês:</label>
+<h1>
+    TABELA DE MOVIMENTAÇÕES
 
-        <input
-            type="month"
-            id="mes"
-            name="mes"
-            value="<%= mes %>"
-            required
-        >
-        <label for="tipo_mov">Tipo de Movimentação:</label>
+    <% if (mes && mes !== '%') { %>
 
-          <select id="tipo_mov" name="tipo_mov" required>
-            <option value="%" <%= tipo_mov === '%' ? 'selected' : '' %>> Todas  </option>
-            <option value="ENT" <%= tipo_mov === 'ENT' ? 'selected' : '' %>>Entrada</option>
-            <option value="SAI" <%= tipo_mov === 'SAI' ? 'selected' : '' %>>Saída</option>
-          </select>
+        <%= new Date(mes + '-01T12:00:00').toLocaleDateString('pt-BR', {
+            month: 'long',
+            year: 'numeric'
+        }).toUpperCase() %>
 
-        <button type="submit">Buscar</button>
-    </form>
+    <% } else { %>
+
+        GERAL
+
+    <% } %>
+</h1>
+
+    
+<form action="/TabMovimentacoes" method="GET">
+
+    <!-- Mantém o mês escolhido no Dashboard -->
+    <input type="hidden" name="mes" value="<%= mes %>">
+
+    <label for="tipo_mov">Tipo de Movimentação:</label>
+
+    <select
+        id="tipo_mov"
+        name="tipo_mov"
+        onchange="this.form.submit()"
+    >
+        <option value="%"
+            <%= tipo_mov === '%' ? 'selected' : '' %>>
+            Todas
+        </option>
+
+        <option value="ENT"
+            <%= tipo_mov === 'ENT' ? 'selected' : '' %>>
+            Entradas
+        </option>
+
+        <option value="SAI"
+            <%= tipo_mov === 'SAI' ? 'selected' : '' %>>
+            Saídas
+        </option>
+    </select>
+
+</form>
+
 
     <hr>
 
@@ -84,8 +117,6 @@
     <% } %>
 </div>
 
-<h1>TABELA DE MOVIMENTAÇÕES </h1>
-
     <!-- TABELA DE MOVIMENTAÇÕES -->
     <table>
         <thead>
@@ -94,6 +125,7 @@
                 <th>DESCRIÇÃO</th>
                 <th>TIPO</th>
                 <th>VALOR</th>
+                <th>EDITAR</th>
             </tr>
         </thead>
 
@@ -132,6 +164,9 @@
                                     maximumFractionDigits: 2
                                 }) %>
                         </td>
+                        <td>
+                            <a href="/editMovimentacao?id=<%= Number(dados[i].ID)%>">EDITAR</a>
+                        </td>
 
                     </tr>
 
@@ -141,46 +176,48 @@
 
         </tbody>
 
-        <tfoot>
-            <tr>
+       
+<tfoot>
+    <tr>
 
-                <!-- PÁGINA ANTERIOR -->
-                <td colspan="1" style="text-align: center;">
+        <!-- PÁGINA ANTERIOR -->
+        <td colspan="1" style="text-align: left;">
 
-                    <% if (pag > 1) { %>
+            <% if (pag > 1) { %>
 
-                        <a href="/TabMovimentacoes?mes=<%= mes %>&pag=<%= Number(pag) - 1 %>">
-                            ⬅
-                        </a>
+                <a href="/TabMovimentacoes?mes=<%= mes %>&tipo_mov=<%= tipo_mov %>&pag=<%= Number(pag) - 1 %>">
+                    ⬅
+                </a>
 
-                    <% } %>
+            <% } %>
 
-                </td>
+        </td>
 
-                <!-- NÚMERO DA PÁGINA -->
-                <td colspan="2" style="text-align: center;">
+        <!-- NÚMERO DA PÁGINA -->
+        <td colspan="3" style="text-align: center;">
 
-                    <% if (dados.length > 8) { %>
-                        <%= pag %> / <%= totalPaginas %>
-                    <% } %>
+            <% if (totalPaginas > 1) { %>
+                <%= pag %> / <%= totalPaginas %>
+            <% } %>
 
-                </td>
+        </td>
 
-                <!-- PRÓXIMA PÁGINA -->
-                <td colspan="1" style="text-align: center;">
+        <!-- PRÓXIMA PÁGINA -->
+        <td colspan="1" style="text-align: right;">
 
-                    <% if (qtd_posts < dados.length) { %>
+            <% if (pag < totalPaginas) { %>
 
-                        <a href="/TabMovimentacoes?mes=<%= mes %>&pag=<%= Number(pag) + 1 %>">
-                            ⮕
-                        </a>
+                <a href="/TabMovimentacoes?mes=<%= mes %>&tipo_mov=<%= tipo_mov %>&pag=<%= Number(pag) + 1 %>">
+                    ⮕
+                </a>
 
-                    <% } %>
+            <% } %>
 
-                </td>
+        </td>
 
-            </tr>
-        </tfoot>
+    </tr>
+</tfoot>
+
 
     </table>
     <% } %>

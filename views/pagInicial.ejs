@@ -12,7 +12,27 @@
 <%- include('partials/header') %>
 
 <main class="container">
-    <h1>DASHBOARD FINANCEIRO <%= anoAtual %></h1>
+
+<form action="/" method="GET">
+
+    <label for="ano" style="font-size: 25px;">DASHBOARD FINANCEIRO  </label>
+
+    <select
+        id="ano"
+        name="ano"
+        onchange="this.form.submit()"
+    >
+        <% for (let i = 2024; i <= 2035; i++) { %>
+            <option
+                value="<%= i %>"
+                <%= Number(anoAtual) === i ? 'selected' : '' %>
+            >
+                <%= i %>
+            </option>
+        <% } %>
+    </select>
+
+</form>
 
     <!-- CASO NÃO EXISTAM MOVIMENTAÇÕES -->
     <% if (totais.length === 0) { %>
@@ -125,57 +145,6 @@
         </table>
 
     <% } %>
-
-    
-<h2>Últimas 5 Entradas</h2>
-
-<% if (ultimasEntradas.length === 0) { %>
-
-    <p>Nenhuma entrada cadastrada.</p>
-
-<% } else { %>
-
-    <table>
-        <thead>
-            <tr>
-                <th>DATA</th>
-                <th>DESCRIÇÃO</th>
-                <th>TIPO MOV.</th>
-                <th>VALOR</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            <% for (let i = 0; i < ultimasEntradas.length; i++) { %>
-                <tr>
-                    <td>
-                        <%= ultimasEntradas[i].DATA.split('-').reverse().join('/') %>
-                    </td>
-
-                    <td>
-                        <%= ultimasEntradas[i].DESCRICAO %>
-                    </td>
-                    <td>
-                        <% if (ultimasEntradas[i].TIPO_MOV == 'ENT') {%>
-                            ENTRADA
-                        <% } else { %>
-                            SAIDA
-                        <% } %>
-                    </td>
-                    <td>
-                        R$ <%= Number(ultimasEntradas[i].VALOR)
-                            .toLocaleString('pt-BR', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                            }) %>
-                    </td>
-                </tr>
-            <% } %>
-        </tbody>
-    </table>
-
-<% } %>
-
 
 </main>
 

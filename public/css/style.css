@@ -398,6 +398,23 @@ tfoot a:hover {
     margin: 15px 0;
 }
 
+
+.btn-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    color: #172b4d;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.btn-voltar:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
 /* =========================================
    RESPONSIVIDADE
 ========================================= */

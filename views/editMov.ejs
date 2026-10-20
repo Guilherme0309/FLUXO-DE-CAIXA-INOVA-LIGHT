@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Editar Movimentação - Inova Light</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/script.js" defer></script>
+</head>
+
+<body>
+
+    <%- include('partials/header') %>
+
+<a href="/TabMovimentacoes" class="btn-voltar" title="Voltar a Tabela Movimentações">
+    &#8592; Voltar
+</a>
+
+    <main class="container">
+
+        <h1>EDITAR MOVIMENTAÇÃO</h1>
+
+        <form
+            action="/editMovimentacao"
+            method="POST"
+            class="formulario"
+            id="formLancamento"
+        >
+
+            <!-- ID DA MOVIMENTAÇÃO -->
+            <input
+                type="hidden"
+                name="id"
+                value="<%= mov.ID %>"
+            >
+
+            <!-- TIPO DE MOVIMENTAÇÃO -->
+            <div>
+                <label for="tipo_mov">
+                    Tipo de Movimentação:
+                </label>
+
+                <select
+                    id="tipo_mov"
+                    name="tipo_mov"
+                    required
+                >
+
+                    <option
+                        value="ENT"
+                        <%= mov.TIPO_MOV === 'ENT' ? 'selected' : '' %>
+                    >
+                        Entrada
+                    </option>
+
+                    <option
+                        value="SAI"
+                        <%= mov.TIPO_MOV === 'SAI' ? 'selected' : '' %>
+                    >
+                        Saída
+                    </option>
+
+                </select>
+            </div>
+
+            <!-- DATA -->
+            <div>
+                <label for="data">
+                    Data da Movimentação:
+                </label>
+
+                <input
+                    type="date"
+                    id="data"
+                    name="data"
+                    value="<%= mov.DATA %>"
+                    max="<%= dataAtual %>"
+                    required
+                >
+            </div>
+
+            <!-- DESCRIÇÃO -->
+            <div>
+                <label for="descricao">
+                    Descrição da Movimentação:
+                </label>
+
+                <textarea
+                    id="descricao"
+                    name="descricao"
+                    placeholder="Descreva a movimentação"
+                    maxlength="200"
+                    rows="3"
+                    required
+                ><%= mov.DESCRICAO %></textarea>
+            </div>
+
+            <!-- VALOR -->
+            <div>
+                <label for="valor">
+                    Valor da Movimentação:
+                </label>
+
+                <!-- CAMPO VISÍVEL -->
+                <input
+                    type="text"
+                    id="valor"
+                    placeholder="R$ 0,00"
+                    inputmode="numeric"
+                    value="<%= Number(mov.VALOR).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    }) %>"
+                    required
+                >
+
+                <!-- VALOR DECIMAL ENVIADO AO EXPRESS -->
+                <input
+                    type="hidden"
+                    id="valorDecimal"
+                    name="valor"
+                    value="<%= Number(mov.VALOR).toFixed(2) %>"
+                >
+            </div>
+
+            <!-- BOTÃO -->
+            <button type="submit">
+                Salvar Alterações
+            </button>
+
+        </form>
+
+    </main>
+
+</body>
+</html>

@@ -7,7 +7,12 @@ router.get('/', (req, res) => {
     console.log("GET /");
 
     const hoje = new Date();
-    const anoAtual = hoje.getFullYear();
+
+    const anoAtual = req.query.ano || String(hoje.getFullYear());
+
+    if (!/^\d{4}$/.test(anoAtual)) {
+        return res.status(400).send("Ano inválido!");
+    }
 
     const meses = [
         "Janeiro", "Fevereiro", "Março", "Abril",
@@ -74,32 +79,12 @@ router.get('/', (req, res) => {
                         console.error(erro);
                         return res.status(500).send("Erro ao calcular totais!");
                     }
-
-                    
-                  db.all(
-                      `SELECT *
-                      FROM MOVIMENTACOES
-                      WHERE TIPO_MOV = 'ENT'
-                      ORDER BY DATA DESC, ID DESC
-                      LIMIT 5`,
-
-                      (erro, ultimasEntradas) => {
-                          if (erro) {
-                              console.error(erro);
-                              return res.status(500).send(
-                                  "Erro ao buscar últimas entradas!"
-                              );
-                          }
-                          console.log (JSON.stringify(ultimasEntradas))
-                          res.render('pagInicial', {
+                    res.render('pagInicial', {
                               totais,
                               totalMeses,
                               anoAtual,
                               meses,
-                              ultimasEntradas
                           });
-                      }
-                  );
 
                 }
             );
@@ -161,6 +146,165 @@ router.post('/novaMovimentacao', (req, res) => {
   });
 });
 
+
+
+router.get('/editMovimentacao', (req, res) => {
+    console.log("GET /editMovimentacao");
+
+    const id = Number(req.query.id);
+
+
+    if (!Number.isInteger(id) || id <= 0) {
+        return res.status(400).send("ID inválido!");
+    }
+
+    const hoje = new Date();
+
+    const dataAtual = [
+        hoje.getFullYear(),
+        String(hoje.getMonth() + 1).padStart(2, '0'),
+        String(hoje.getDate()).padStart(2, '0')
+    ].join('-');
+
+    db.get(
+        'SELECT * FROM MOVIMENTACOES WHERE ID = ?',
+        [id],
+        (erro, mov) => {
+
+            if (erro) {
+                console.error(erro);
+                return res.status(500).send(
+                    "Erro ao consultar banco!"
+                );
+            }
+
+            if (!mov) {
+                return res.status(404).send(
+                    "Movimentação não encontrada!"
+                );
+            }
+
+            console.log("Movimentação:", mov);
+
+            // ENVIA OS DADOS PARA O EJS
+            res.render('editMov', {
+                mov,
+                dataAtual
+            });
+        }
+    );
+});
+
+
+router.post('/editMovimentacao', (req, res) => {
+    console.log("POST /editMovimentacao");
+    console.log(req.body);
+
+    // RECEBE OS DADOS DO FORMULÁRIO
+    const { id, tipo_mov, data, descricao, valor } = req.body;
+
+    // CONVERTE ID E VALOR PARA NÚMERO
+    const idNumerico = Number(id);
+    const valorNumerico = Number(valor);
+
+    const hoje = new Date();
+
+    const dataAtual = [
+        hoje.getFullYear(),
+        String(hoje.getMonth() + 1).padStart(2, '0'),
+        String(hoje.getDate()).padStart(2, '0')
+    ].join('-');
+
+    // VALIDAÇÕES
+
+    if (!Number.isInteger(idNumerico) || idNumerico <= 0) {
+        return res.status(400).send("ID inválido!");
+
+    } else if (!["ENT", "SAI"].includes(tipo_mov)) {
+        return res.status(400).send(
+            "Tipo de movimentação inválido!"
+        );
+
+    } else if (
+        typeof data !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(data) ||
+        data > dataAtual
+    ) {
+        return res.status(400).send(
+            "Data inválida ou futura!"
+        );
+
+    } else if (
+        typeof descricao !== "string" ||
+        descricao.trim() === "" ||
+        descricao.trim().length > 200
+    ) {
+        return res.status(400).send(
+            "Descrição inválida!"
+        );
+
+    } else if (
+        typeof valor !== "string" ||
+        valor.trim() === "" ||
+        !/^\d+(\.\d{1,2})?$/.test(valor) ||
+        !Number.isFinite(valorNumerico) ||
+        valorNumerico <= 0
+    ) {
+        return res.status(400).send(
+            "Valor inválido!"
+        );
+    }
+
+    // ATUALIZA OS DADOS NO SQLITE
+
+    db.run(
+        `UPDATE MOVIMENTACOES
+         SET TIPO_MOV = ?,
+             DATA = ?,
+             DESCRICAO = ?,
+             VALOR = ?
+         WHERE ID = ?`,
+
+        [
+            tipo_mov,
+            data,
+            descricao.trim(),
+            valorNumerico,
+            idNumerico
+        ],
+
+        function (erro) {
+
+            if (erro) {
+                console.error("Erro SQLite:", erro);
+
+                return res.status(500).send(
+                    "Erro ao atualizar movimentação!"
+                );
+            }
+
+            // VERIFICA SE O ID EXISTE
+            if (this.changes === 0) {
+                return res.status(404).send(
+                    "Movimentação não encontrada!"
+                );
+            }
+
+            console.log(
+                "Movimentação atualizada! ID:",
+                idNumerico
+            );
+
+            // VOLTA PARA O MÊS DA MOVIMENTAÇÃO
+            return res.redirect(
+                '/TabMovimentacoes?mes=' + data.slice(0, 7)
+            );
+        }
+    );
+});
+
+
+
 router.get('/TabMovimentacoes', (req, res) => {
   console.log ("get /TabMovimentacoes");
   console.log (req.query);
@@ -169,12 +313,8 @@ router.get('/TabMovimentacoes', (req, res) => {
   const pag = Number(req.query.pag) || 1;
 
   // Recebe o mês e a página pela URL
-  const hoje = new Date();
-    const mesAtual = 
-    hoje.getFullYear() +
-    '-' +
-    String(hoje.getMonth() + 1).padStart(2, '0'); //padStart completa com 0 a esquerda ate ficas com 2 caracteres
-    const mes = req.query.mes || mesAtual; //Recebe ou mes passado nos parametros ou mes atual 
+
+    const mes = req.query.mes || '%'; //Recebe ou mes passado nos parametros ou mes atual 
     console.log("Mes: ", mes)
 
     //Recebe movPadrao
