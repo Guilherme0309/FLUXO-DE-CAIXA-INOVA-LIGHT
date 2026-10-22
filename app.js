@@ -8,7 +8,6 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(session({ secret: process.env.SESSION_SECRET || 'troque-esta-chave-em-producao', resave: false, saveUninitialized: false }));
 app.use('/', paginas);
 
 app.use((req, res) => res.status(404).send('Página não encontrada'));
