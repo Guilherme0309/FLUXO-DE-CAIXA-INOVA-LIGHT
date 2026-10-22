@@ -1,5 +1,4 @@
 const express = require('express');
-const session = require('express-session');
 const path = require('path');
 require('./database/db');
 const paginas = require('./routes/paginas');
