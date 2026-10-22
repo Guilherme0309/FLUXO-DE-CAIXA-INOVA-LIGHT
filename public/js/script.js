@@ -30,7 +30,7 @@ if (inputValor && valorDecimal && formulario) {
         // Verifica se é cadastro ou edição
         const editando = formulario.action.includes("/editMovimentacao");
 
-        const mensagem = editandos
+        const mensagem = editando
             ? "Deseja realmente salvar as alterações desta movimentação?"
             : "Deseja realmente cadastrar esta movimentação?";
 
